@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mon premier site web en php</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <?php require_once 'section/entete.phtml'; ?>
+
+    <?php require_once 'section/menu.phtml'; ?>
+
+    <div id="contenu">
+        <?php
+        if (isset($article))
+        {
+            echo '<h1>' .  $article->getTitre() . '</h1>';
+            echo '<h3>par <a href="index.php?ctrl=blogue&action=consulter&idblogue=' . $article->getAuteur()->getId() . '">' . $article->getAuteur()->getUsername() . '</a></h3>';
+            echo '<h5>créé le ' .  $article->getDateCreation()->format('Y-m-d') . '</h5>';
+            echo '<h5>modifié le ' .  $article->getDateModification()->format('Y-m-d H:i:s') . '</h5>';
+            echo '<h6> classé dans : ';
+            foreach ($article->getTags() as $tag)
+            {
+                echo '#' . $tag->getNom() . ' ';
+            }
+            echo '</h6>';
+            echo '<div class="sautligne">' . $article->getTexte() . '</div>';
+
+            echo '<div class="sautligne">';
+            if (!empty($article->getCommentaires()))
+            {
+
+                echo '<h3>Commentaires</h3>';
+                foreach ($article->getCommentaires() as $commentaire)
+                {
+                    echo '<div class="sautligne">';
+                    echo '<h4>' . $commentaire->getAuteur()->getUsername() . ' a écrit le ' . $commentaire->getDatePublication()->format('Y-m-d H:i:s') . '</h4>';
+                    echo $commentaire->getTexte();
+                    echo '</div>';
+                }
+            }
+            echo '</div>';
+        }
+        else
+        {
+            echo '<div>Article inconnu...</div>';
+        }
+        ?>
+    </div>
+
+    <?php require_once 'section/pied.phtml'; ?>
+</body>
+
+</html>

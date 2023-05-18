@@ -1,0 +1,41 @@
+.erreur {
+    border-style: dotted;
+    color: red;
+}
+
+.succes {
+    border-style: dotted;
+    color: green;
+}
+
+#entete {
+    background-color: blue;
+    text-align: center;
+}
+
+#menu {
+    background-color: orange;
+    text-align: left;
+}
+
+#contenu {
+    /*background-color: red;*/
+}
+
+#pied {
+    background-color: yellow;
+    text-align: center;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.sautligne {
+    display: block;
+    padding: 4px 2px;
+    margin: 2px 0 20px 10px;
+}

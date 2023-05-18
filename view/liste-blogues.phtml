@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mon premier site web en php</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <?php require_once 'section/entete.phtml'; ?>
+
+    <?php require_once 'section/menu.phtml'; ?>
+
+    <div id="contenu">
+        <h1>Les blogues :</h1>
+        <ul>
+            <?php
+            foreach ($blogues as $blogue)
+            {
+                echo '<li><a href="index.php?ctrl=blogue&action=consulter&idblogue=' . $blogue->getId() . '">' . $blogue->getUsername() . '</a></li>';
+            }
+            ?>
+        </ul>
+    </div>
+
+    <?php require_once 'section/pied.phtml'; ?>
+</body>
+
+</html>

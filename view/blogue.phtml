@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mon premier site web en php</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <?php require_once 'section/entete.phtml'; ?>
+
+    <?php require_once 'section/menu.phtml'; ?>
+
+    <div id="contenu">
+        <?php
+        if (isset($blogue))
+        {
+        ?>
+            <h1>Bienvenue sur le blogue de <?= $blogue->getUsername() ?></h1>
+            <h3>Voici les articles du blogue : </h3>
+            <div class="sautligne">
+                <table>
+                    <tr>
+                        <th>Article</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+
+                    <?php
+                    foreach ($articles as $article)
+                    {
+                    ?>
+                        <tr>
+                            <td><a href="index.php?ctrl=article&action=consulter&idarticle=<?= $article->getId() ?>"><?= $article->getTitre() ?></a></td>
+
+                            <td>
+                                <form name="modifierAticle" action="index.php" method="post">
+                                    <input type="hidden" name="idarticle" value="<?= $article->getId() ?>">
+                                    <input type="hidden" name="idblogue" value="<?= $blogue->getId() ?>">
+                                    <input type="hidden" name="ctrl" value="article">
+                                    <input type="hidden" name="action" value="demandeModification">
+                                    <input type="submit" name="boutonDemandeModification" value="Modifier">
+                                </form>
+                            </td>
+
+                            <td>
+                                <form name="supprimerArticle" action="index.php" method="post">
+                                    <input type="hidden" name="idarticle" value="<?= $article->getId() ?>">
+                                    <input type="hidden" name="idblogue" value="<?= $blogue->getId() ?>">
+                                    <input type="hidden" name="ctrl" value="article">
+                                    <input type="hidden" name="action" value="supprimer">
+                                    <input type="submit" name="boutonSupprimer" value="Supprimer">
+                                </form>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                </table>
+            </div>
+        <?php
+        }
+        else
+        {
+            echo '<div>Blogue inconnu...</div>';
+        }
+
+        require_once 'section/retroaction.phtml';
+
+        // Dans le cas d'un article n'a pas de tags
+        if (!isset($tags))
+            $tags = array();
+
+        // Pour modifier un article (formulaire)
+        if (isset($blogue) && isset($articleAModifier))
+        {
+        ?>
+            <div class="sautligne">
+                <form name="modifierArticle" action="index.php" method="post">
+                    <fieldset>
+                        <legend>Modifier votre article</legend>
+                        Titre : <input class="sautligne" type="text" name="titre" value="<?= isset($titre)?$titre:"" ?>">
+                        <p>Texte :</p> <textarea class="sautligne" name="texte" cols="100" rows="10"><?= $texte ?></textarea>
+                        Choisissez les tags :
+                        <?php
+                        foreach ($tagsRef as $tag)
+                        {
+                            $checked = '';
+                            if (in_array($tag->getId(), $tags))
+                                $checked = 'checked';
+                            echo '<label><input type="checkbox" name="tags[]" value="' . $tag->getId() . '" ' . $checked . '>' . $tag->getNom() . '</label>&nbsp;&nbsp;';
+                        }
+                        ?>
+                        <br /><br />
+                        <input type="hidden" name="idblogue" value="<?= $articleAModifier->getAuteur()->getId() ?>">
+                        <input type="hidden" name="idarticle" value="<?= $articleAModifier->getId() ?>">
+                        <input type="hidden" name="ctrl" value="article">
+                        <input type="hidden" name="action" value="modifier">
+                        <input type="submit" name="boutonModifier" value="Modifier">
+                        <input type="submit" name="boutonAnnuler" value="Annuler">
+                    </fieldset>
+                </form>
+            </div>
+        <?php
+        }
+        // Pour ajout d'un article (formulaire)
+        else if (isset($blogue))
+        {
+        ?>
+            <div class="sautligne">
+                <form name="ajouterArticle" action="index.php" method="post">
+                    <fieldset>
+                        <legend>Ajoutez un nouvel article à votre blogue</legend>
+                        Titre : <input class="sautligne" type="text" name="titre" value="<?= isset($titre)?$titre:"" ?>">
+                        <p>Texte :</p> <textarea class="sautligne" name="texte" cols="100" rows="10"><?= $texte ?></textarea>
+                        Choisissez les tags :
+                        <?php
+                        foreach ($tagsRef as $tag)
+                        {
+                            $checked = '';
+                            if (in_array($tag->getId(), $tags))
+                                $checked = 'checked';
+                            echo '<label><input type="checkbox" name="tags[]" value="' . $tag->getId() . '" ' . $checked . '>' . $tag->getNom() . '</label>&nbsp;&nbsp;';
+                        }
+                        ?>
+                        <br /><br />
+                        <input type="hidden" name="idblogue" value="<?= $blogue->getId() ?>">
+                        <input type="hidden" name="ctrl" value="article">
+                        <input type="hidden" name="action" value="ajouter">
+                        <input class="sautligne" type="submit" name="boutonAjouter" value="Ajouter">
+                    </fieldset>
+                </form>
+            </div>
+        <?php
+        }
+        ?>
+    </div>
+
+    <?php require_once 'section/pied.phtml'; ?>
+</body>
+
+</html>
