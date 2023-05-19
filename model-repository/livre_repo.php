@@ -96,8 +96,8 @@ class livreRepository extends ModelRepository
 //   `idAuteurs` int(10) unsigned NOT NULL,
 
         $requete = $this->connexion->prepare(
-            "INSERT INTO livres(titre, texte, dateCreation, dateModification, publie, utilisateur_id) " .
-                "VALUE(:titre, :texte, CURDATE(), NOW(), :publie, :utilisateur_id)"
+            "INSERT INTO livres(titre, location, idnuméro, resumer, idautheurs) " .
+                "VALUE(:titre, :texte,  :location, :idnuméro,:resumer :idautheur)"
         );
 
         $requete->bindValue(":titre", $article->getTitre());
