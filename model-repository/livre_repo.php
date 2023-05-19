@@ -134,15 +134,15 @@ class livreRepository extends ModelRepository
             "UPDATE livres SET titre=:titre, texte=:texte, dateModification=NOW(), publie=:publie WHERE id=:id"
         );
 
-        $requete->bindValue(":titre", $article->getTitre());
-        $requete->bindValue(":texte", $article->getTexte());
-        $requete->bindValue(":publie", $article->getPublie(), PDO::PARAM_BOOL);
-        $requete->bindValue(":id", $article->getId());
+        $requete->bindValue(":titre", $livres->getTitre());
+        $requete->bindValue(":texte", $livres->getTexte());
+        $requete->bindValue(":publie", $livres->getPublie(), PDO::PARAM_BOOL);
+        $requete->bindValue(":id", $livres->getId());
 
         $requete->execute();
 
         $succes = $requete->rowCount() != 0;
-        $this->updateTagsArticle($article);
+        $this->updateTagsArticle($livres);
 
         $this->connexion->commit();
 
@@ -180,7 +180,7 @@ class livreRepository extends ModelRepository
         $autheur = $this->autheurRepository->select($record['idautheurs']);
         if ($autheur != null)
         {
-
+    
 //             `id` int(10) unsigned NOT NULL AUTO_INCREMENT, 
 //   `titre` varchar(50) NOT NULL,
 //   `location` boolean not null,
@@ -188,7 +188,7 @@ class livreRepository extends ModelRepository
 //   `resumer` text NOT NULL,
 //   `idAuteurs` int(10) unsigned NOT NULL,
 
-            $livre = new Article(
+            $livre = new livre(
                 $record['titre'],
                 $record['location'],
           
@@ -216,17 +216,18 @@ class livreRepository extends ModelRepository
      */
     private function updateTagslivres(livres $livres)
     {
-        // Suppression des anciens tag_article
-        $requete = $this->connexion->prepare("DELETE FROM tag_article WHERE article_id=:article_id");
-        $requete->bindValue(":article_id", $article->getId());
-        $requete->execute();
+        // // Suppression des anciens tag_article
+        // $requete = $this->connexion->prepare("DELETE FROM tag_article WHERE article_id=:article_id");
+        // $requete->bindValue(":article_id", $article->getId());
+        // $requete->execute();
 
-        // Mise à jour avec les nouveaux tag_article
-        $requete = $this->connexion->prepare("INSERT INTO tag_article(tag_id, article_id) VALUES(:tag_id, :article_id)");
-        foreach ($article->getTags() as $tag)
-        {
-            $requete->bindValue(":tag_id", $tag->getId());
-            $requete->bindValue(":article_id", $article->getId());
-            $requete->execute();
-        }
+        // // Mise à jour avec les nouveaux tag_article
+        // $requete = $this->connexion->prepare("INSERT INTO tag_article(tag_id, article_id) VALUES(:tag_id, :article_id)");
+        // foreach ($article->getTags() as $tag)
+        // {
+        //     $requete->bindValue(":tag_id", $tag->getId());
+        //     $requete->bindValue(":article_id", $article->getId());
+        //     $requete->execute();
+        // }
     }
+}
