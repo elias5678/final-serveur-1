@@ -1,6 +1,6 @@
 <?php
 
-class Article
+class livre
  {
 //      `id` int(10) unsigned NOT NULL AUTO_INCREMENT, 
 //     `titre` varchar(50) NOT NULL,
@@ -18,7 +18,6 @@ class Article
 
     public function __construct(
         string $titre,
-     
         autheurs $auteur,
         string $resumer,
         int $idnum,
@@ -87,31 +86,7 @@ class Article
         return $this;
     }
 
-    /**
-     * Get the value of texte
-     *
-     * @return string
-     */
-    public function getTexte(): string
-    {
-        return $this->texte;
-    }
-
-    /**
-     * Set the value of texte
-     *
-     * @param string $texte
-     *
-     * @return self
-     */
-    public function setTexte(string $texte): self
-    {
-        $texte = trim($texte);
-        if (strlen($texte) > 65535 || empty($texte))
-            throw new Exception("Le texte '$texte' doit être >= 1 ET <= 65535.");
-        $this->texte = $texte;
-        return $this;
-    }
+   
 
     
     /**

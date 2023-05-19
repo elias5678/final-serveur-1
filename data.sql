@@ -19,7 +19,7 @@ CREATE TABLE `livres` (
   `location` boolean not null,
   `idnuméro` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `resumer` text NOT NULL,
-  `idAuteurs` int(10) unsigned NOT NULL,
+  `idauteurs` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`idAuteurs`) REFERENCES `auteurs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
