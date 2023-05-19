@@ -74,7 +74,7 @@ class livreRepository extends ModelRepository
             }
         }
 
-        return $livres
+        return $livres;
     }
 
 
@@ -97,20 +97,20 @@ class livreRepository extends ModelRepository
 
         $requete = $this->connexion->prepare(
             "INSERT INTO livres(titre, location, idnuméro, resumer, idautheurs) " .
-                "VALUE(:titre, :texte,  :location, :idnuméro,:resumer :idautheur)"
+                "VALUE(:titre,  :location, :idnuméro,:resumer :idautheur)"
         );
 
-        $requete->bindValue(":titre", $article->getTitre());
-        $requete->bindValue(":texte", $article->getTexte());
-        $requete->bindValue(":publie", $article->getPublie(), PDO::PARAM_BOOL);
-        $requete->bindValue(":utilisateur_id", $article->getAuteur()->getId());
-
+        $requete->bindValue(":titre", $livres->getTitre());
+        $requete->bindValue(":idnuméro", $livres->getIdnuméro());
+        $requete->bindValue(":location", $livres->getLocation(), PDO::PARAM_BOOL);
+        $requete->bindValue(":idauteurs", $livres>getAuteur()->getId());
+        $requete->bindValue(":resumer", $livres->getResumer());
         $requete->execute();
 
         $id = $this->connexion->lastInsertId();
 
-        $article->setId($id);
-        $this->updateTagsArticle($article);
+        $livres->setId($id);
+        $this->updateTagsLivre($livres);
 
         $this->connexion->commit();
 
@@ -125,12 +125,13 @@ class livreRepository extends ModelRepository
      * @param Article $article L'article à mettre à jour en BD.
      * @return bool Vrai si la mise à jour a été effectuée. Faux dans le cas contraire.
      */
-    public function update(Article $article) : bool
+
+    public function update(livres $livres) : bool
     {
         $this->connexion->beginTransaction();
 
         $requete = $this->connexion->prepare(
-            "UPDATE article SET titre=:titre, texte=:texte, dateModification=NOW(), publie=:publie WHERE id=:id"
+            "UPDATE livres SET titre=:titre, texte=:texte, dateModification=NOW(), publie=:publie WHERE id=:id"
         );
 
         $requete->bindValue(":titre", $article->getTitre());
@@ -161,7 +162,7 @@ class livreRepository extends ModelRepository
     {
         $this->connexion->beginTransaction();
 
-        $requete = $this->connexion->prepare("DELETE FROM article WHERE id=:id");
+        $requete = $this->connexion->prepare("DELETE FROM livres WHERE id=:id");
         $requete->bindValue(":id", $id);
         $requete->execute();
 
@@ -190,36 +191,21 @@ class livreRepository extends ModelRepository
             $livre = new Article(
                 $record['titre'],
                 $record['location'],
-                $autheur,
+          
                 $record['idnuméro'],
-                $record['idnuméro'],
+                $record['idauteurs'],
                 $record['resumer'],
                 $record['id']
             );
 
-            $this->selectTagsArticle($livre);
+            $this->selectTagslivres($livre);
         }
 
         return $livre;
     }
 
 
-    private function selectTagsArticle($article)
-    {
-        $requete = $this->connexion->prepare(
-            "SELECT * FROM tag_article " .
-                "INNER JOIN tag ON tag_id = id " .
-                "WHERE article_id=:article_id"
-        );
-        $requete->bindValue(":article_id", $article->getId());
-        $requete->execute();
-
-        while ($record = $requete->fetch())
-        {
-            $article->addTag(new Tag($record['nom'], $record['id']));
-        }
-    }
-
+    
 
     /**
      * Permet de mettre à jour en BD les tag_article d'un article.
@@ -228,7 +214,7 @@ class livreRepository extends ModelRepository
      * 
      * @param Article $article L'article pour lequel mettre à jour les tag_article.
      */
-    private function updateTagsArticle(Article $article)
+    private function updateTagslivres(livres $livres)
     {
         // Suppression des anciens tag_article
         $requete = $this->connexion->prepare("DELETE FROM tag_article WHERE article_id=:article_id");
