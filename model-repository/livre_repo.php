@@ -74,7 +74,7 @@ class livreRepository extends ModelRepository
             }
         }
 
-        return $livres
+        return $livres;
     }
 
 
@@ -97,20 +97,21 @@ class livreRepository extends ModelRepository
 
         $requete = $this->connexion->prepare(
             "INSERT INTO livres(titre, location, idnuméro, resumer, idautheurs) " .
-                "VALUE(:titre, :texte,  :location, :idnuméro,:resumer :idautheur)"
+                "VALUE(:titre,  :location, :idnuméro,:resumer :idautheur)"
         );
 
-        $requete->bindValue(":titre", $article->getTitre());
-        $requete->bindValue(":texte", $article->getTexte());
-        $requete->bindValue(":publie", $article->getPublie(), PDO::PARAM_BOOL);
-        $requete->bindValue(":utilisateur_id", $article->getAuteur()->getId());
+        $requete->bindValue(":titre", $livres->getTitre());
+        $requete->bindValue(":idnuméro", $livres->getIdnuméro());
+        $requete->bindValue(":location", $livres->getlocation(), PDO::PARAM_BOOL);
+        $requete->bindValue(":idauteurs", $livres->getAuteur()->getId());
+        $requete->bindValue(":resumer", $livres->getResumer());
 
         $requete->execute();
 
         $id = $this->connexion->lastInsertId();
 
-        $article->setId($id);
-        $this->updateTagsArticle($article);
+        $livres->setId($id);
+        $this->updateTagsArticle($livres);
 
         $this->connexion->commit();
 
@@ -133,15 +134,15 @@ class livreRepository extends ModelRepository
             "UPDATE article SET titre=:titre, texte=:texte, dateModification=NOW(), publie=:publie WHERE id=:id"
         );
 
-        $requete->bindValue(":titre", $article->getTitre());
-        $requete->bindValue(":texte", $article->getTexte());
-        $requete->bindValue(":publie", $article->getPublie(), PDO::PARAM_BOOL);
-        $requete->bindValue(":id", $article->getId());
+        $requete->bindValue(":titre", $livres->getTitre());
+        $requete->bindValue(":texte", $livres->getTexte());
+        $requete->bindValue(":publie", $livres->getPublie(), PDO::PARAM_BOOL);
+        $requete->bindValue(":id", $livres->getId());
 
         $requete->execute();
 
         $succes = $requete->rowCount() != 0;
-        $this->updateTagsArticle($article);
+        $this->updateTagsArticle($livres);
 
         $this->connexion->commit();
 
@@ -161,7 +162,7 @@ class livreRepository extends ModelRepository
     {
         $this->connexion->beginTransaction();
 
-        $requete = $this->connexion->prepare("DELETE FROM article WHERE id=:id");
+        $requete = $this->connexion->prepare("DELETE FROM livres WHERE id=:id");
         $requete->bindValue(":id", $id);
         $requete->execute();
 
@@ -179,7 +180,7 @@ class livreRepository extends ModelRepository
         $autheur = $this->autheurRepository->select($record['idautheurs']);
         if ($autheur != null)
         {
-
+    
 //             `id` int(10) unsigned NOT NULL AUTO_INCREMENT, 
 //   `titre` varchar(50) NOT NULL,
 //   `location` boolean not null,
@@ -187,11 +188,11 @@ class livreRepository extends ModelRepository
 //   `resumer` text NOT NULL,
 //   `idAuteurs` int(10) unsigned NOT NULL,
 
-            $livre = new Article(
+            $livre = new livre(
                 $record['titre'],
                 $record['location'],
-                $autheur,
-                $record['idnuméro'],
+              
+                $record['idautwurs'],
                 $record['idnuméro'],
                 $record['resumer'],
                 $record['id']
@@ -204,21 +205,7 @@ class livreRepository extends ModelRepository
     }
 
 
-    private function selectTagsArticle($article)
-    {
-        $requete = $this->connexion->prepare(
-            "SELECT * FROM tag_article " .
-                "INNER JOIN tag ON tag_id = id " .
-                "WHERE article_id=:article_id"
-        );
-        $requete->bindValue(":article_id", $article->getId());
-        $requete->execute();
-
-        while ($record = $requete->fetch())
-        {
-            $article->addTag(new Tag($record['nom'], $record['id']));
-        }
-    }
+   
 
 
     /**
@@ -228,19 +215,20 @@ class livreRepository extends ModelRepository
      * 
      * @param Article $article L'article pour lequel mettre à jour les tag_article.
      */
-    private function updateTagsArticle(Article $article)
+    private function updateTagsArticle(livres $livres)
     {
-        // Suppression des anciens tag_article
-        $requete = $this->connexion->prepare("DELETE FROM tag_article WHERE article_id=:article_id");
-        $requete->bindValue(":article_id", $article->getId());
-        $requete->execute();
+        // // Suppression des anciens tag_article
+        // $requete = $this->connexion->prepare("DELETE FROM tag_article WHERE article_id=:article_id");
+        // $requete->bindValue(":article_id", $article->getId());
+        // $requete->execute();
 
-        // Mise à jour avec les nouveaux tag_article
-        $requete = $this->connexion->prepare("INSERT INTO tag_article(tag_id, article_id) VALUES(:tag_id, :article_id)");
-        foreach ($article->getTags() as $tag)
-        {
-            $requete->bindValue(":tag_id", $tag->getId());
-            $requete->bindValue(":article_id", $article->getId());
-            $requete->execute();
-        }
+        // // Mise à jour avec les nouveaux tag_article
+        // $requete = $this->connexion->prepare("INSERT INTO tag_article(tag_id, article_id) VALUES(:tag_id, :article_id)");
+        // foreach ($article->getTags() as $tag)
+        // {
+        //     $requete->bindValue(":tag_id", $tag->getId());
+        //     $requete->bindValue(":article_id", $article->getId());
+        //     $requete->execute();
+        // }
     }
+}
